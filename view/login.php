@@ -15,11 +15,13 @@
     <form action="/loginUser" method="post">
         <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+            <input type="text" class="form-control" id="username" placeholder="Enter username" name="username"
+            value="<?php echo $_COOKIE['username']?>" >
         </div>
         <div class="form-group">
             <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password"
+            value="<?php echo $_COOKIE['password'] ?>" >
         </div>
         <div class="checkbox">
             <label><input type="checkbox" name="remember"> Remember me</label>

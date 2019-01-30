@@ -7,7 +7,10 @@ function modelAddUser()
     if (!checkValidate()) exit("invalid data");
     $data = $_POST;
     print_r($data);
-    $passwordHash = $data['password'];
+    $username = prepare();
+
+
+    $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
     $query = sprintf("insert into register (userName, password, name) VALUES ('%s', '%s', '%s')",
         $_POST['userName'], $passwordHash, $data['name']);
     if (addToDB($query)) header("Location: /login");
@@ -39,19 +42,22 @@ function modelLogin()
     $userName = $_POST['username'];
     $pass = $_POST['password'];
     $keeper = $_POST['remember'];
+    echo $keeper;
 //    echo $pass;
-    $user=getUserData($userName)[0];
-    $hashedPassword =$user['password'];
-//    if (Password_verify($pass, $hashedPassword)){
-//
-//    } echo Password_Hash($pass, 1) . "\n <br>";
-//    print_r($hashedPassword);
-
-    if ($pass==$hashedPassword){
+    $user = getUserData($userName)[0];
+    $hashedPassword = $user['password'];
+    if (Password_verify($pass, $hashedPassword)) {
         session_start();
-        $_SESSION['userId']=$user['id'];
+        $_SESSION['userId'] = $user['id'];
+        if ($keeper == 'on') {
+            $hour = time() + 3600 * 24 * 30;
+            setcookie('username', $userName, $hour);
+            setcookie('password', $pass, $hour);
+        }
+        $_SESSION['userName'] = $userName;
+        header("Location: /usersPage");
+    } else echo "incorrect username or password";
 
-    }else echo "not";
 }
 
 function getUserData($username)
@@ -60,4 +66,25 @@ function getUserData($username)
     $query = "select * from register where userName='$username'";
     return getUserName($query);
 
+}
+
+function modelAllUsers()
+{
+    $query = "select * from register ;";
+    $users = get($query);
+    return $users;
+}
+
+function modelUpdateUser($id)
+{
+    $query = sprintf("update register set  userName='%s',  name='%s' where id=$id ;",
+        $_POST['userName'],  $_POST['name']);
+    $status=updateToDB($query);
+    if ($status) return true; else return false;
+
+}
+function modelDeleteUser($id)
+{
+    $query="delete from register where id = $id";
+    return delete($query);
 }

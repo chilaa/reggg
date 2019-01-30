@@ -4,7 +4,15 @@ include_once "controller/userController.php";
 
 function router($method, $url, $action)
 {
-    if (check($method, $url)) {
+    if (strpos($url, '{') !== false) {
+
+        $paths = explode('/', $_SERVER['PATH_INFO']);
+        $requests = explode('/', $url);
+        if ($paths[1] == $requests[1] && $_SERVER['REQUEST_METHOD'] == $method) {
+            $username = $paths[2];
+            $action($username);
+        }
+    } else if (check($method, $url)) {
         $action();
     }
 }

@@ -33,8 +33,24 @@ function getUserName($query)
 
 function addToDB($query)
 {
+    $conn = connect();
+    $result = mysqli_query($conn, $query);
+    mysqli_close($conn);
+
+    return $result;
+}
+
+function updateToDB($query)
+{
     $conn=connect();
     $result=mysqli_query($conn, $query);
     mysqli_close($conn);
     return $result;
+}
+function delete($query)
+{
+    $con=connect();
+    $res=mysqli_query($con, $query);
+    mysqli_close($con);
+    return $res ?  true :  false;
 }
